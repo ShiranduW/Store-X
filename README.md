@@ -1,4 +1,4 @@
-# Mebius Store Frontend
+# Store-X Store Frontend
 
 A modern e-commerce web application built with React and Vite, featuring user authentication and shopping cart functionality.
 

@@ -1,33 +1,46 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  value: [],
-};
-
-export const cartSlice = createSlice({
+const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: {
+    items: [],
+    error: null
+  },
   reducers: {
     addToCart: (state, action) => {
-      console.log(state.value);
-      const product = action.payload;
-
-      const foundItem = state.value.find(
-        (item) => item.product._id === product._id
-      );
-      if (foundItem) {
-        foundItem.quantity += 1;
-        return;
+      const item = action.payload;
+      const existingItem = state.items.find(i => i._id === item._id);
+      
+      if (existingItem) {
+        if (existingItem.quantity >= item.stockQuantity) {
+          state.error = "Cannot add more items than available in stock";
+          return;
+        }
+        existingItem.quantity += 1;
+      } else {
+        state.items.push({ ...item, quantity: 1 });
       }
-      state.value.push({ product: action.payload, quantity: 1 });
+      state.error = null;
+    },
+    removeFromCart: (state, action) => {
+      const productId = action.payload;
+      const foundItem = state.items.find(item => item._id === productId);
+      if (foundItem) {
+        if (foundItem.quantity > 1) {
+          foundItem.quantity -= 1;
+        } else {
+          state.items = state.items.filter(item => item._id !== productId);
+        }
+      }
     },
     clearCart: (state) => {
-      state.value = [];
+      state.items = [];
+      state.error = null;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addToCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

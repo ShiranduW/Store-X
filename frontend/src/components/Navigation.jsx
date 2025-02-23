@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 function Navigation(props) {
 
-  const cart = useSelector((state) => state.cart.value);
+  const cart = useSelector((state) => state.cart.items) || [];
 
   const getCartQuantity = () => {
     let count = 0;

@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router";
 import { store } from "@/lib/store";
 import { Provider } from "react-redux";
 import { ClerkProvider } from "@clerk/clerk-react";
@@ -19,9 +19,9 @@ import RootLayout from "./layouts/rootLayout/root.layout";
 import AccountPage from "./pages/account.page";
 import CompletePage from "./pages/complete.page";
 import PaymentPage from "./pages/payment.page";
+import ShopPage from "./pages/shop.page";
 
 import AdminProductCreatePage from "./pages/admin-product-create.page";
-
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -29,7 +29,6 @@ if (!PUBLISHABLE_KEY) {
 }
 
 createRoot(document.getElementById("root")).render(
-  // <StrictMode>
   <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
     <Provider store={store}>
       <BrowserRouter>
@@ -39,6 +38,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/" element={<HomePage />} />
               {/* The Protected layout can be used to wrap routes that needs to be logged in to access */}
               <Route element={<Protected />}>
+                <Route path="/shop" element={<ShopPage />} />
                 <Route path="/shop/cart" element={<CartPage />} />
                 <Route path="/shop/checkout" element={<CheckoutPage />} />
                 <Route path="/shop/payment" element={<PaymentPage />} />
@@ -61,5 +61,4 @@ createRoot(document.getElementById("root")).render(
       </BrowserRouter>
     </Provider>
   </ClerkProvider>
-  // </StrictMode>
 );

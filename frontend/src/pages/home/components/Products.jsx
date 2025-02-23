@@ -21,10 +21,11 @@ function Products(props) {
   } = useGetCategoriesQuery();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
+
   const filteredProducts =
     selectedCategoryId === "ALL"
       ? products
-      : products.filter((product) => product.categoryId === selectedCategoryId);
+      : products?.filter((product) => product.categoryId?._id === selectedCategoryId);
 
   const handleTabClick = (_id) => {
     setSelectedCategoryId(_id);
@@ -34,7 +35,6 @@ function Products(props) {
     return (
       <section className="px-8 py-8">
         <h2 className="text-4xl font-bold">Our Top Products</h2>
-
         <Separator className="mt-2" />
         <div className="mt-4 flex items-center gap-4">
           <Skeleton className="h-16" />
@@ -53,14 +53,19 @@ function Products(props) {
     return (
       <section className="px-8 py-8">
         <h2 className="text-4xl font-bold">Our Top Products</h2>
-
         <Separator className="mt-2" />
         <div className="mt-4 flex items-center gap-4"></div>
         <div className="mt-4">
-          <p className="text-red-500">{`Error fetching products or categories`}</p>
+          <p className="text-red-500">
+            {`Error fetching products or categories: ${productsError?.message || categoriesError?.message}`}
+          </p>
         </div>
       </section>
     );
+  }
+
+  if (!products || !categories) {
+    return null;
   }
 
   return (
@@ -68,7 +73,14 @@ function Products(props) {
       <h2 className="text-4xl font-bold">Our Top Products</h2>
       <Separator className="mt-2" />
       <div className="mt-4 flex items-center gap-4">
-        {[...categories, { _id: "ALL", name: "All" }].map((category) => (
+        <Tab
+          key="ALL"
+          _id="ALL"
+          selectedCategoryId={selectedCategoryId}
+          name="All"
+          onTabClick={handleTabClick}
+        />
+        {categories.map((category) => (
           <Tab
             key={category._id}
             _id={category._id}
@@ -78,7 +90,7 @@ function Products(props) {
           />
         ))}
       </div>
-      <ProductCards products={filteredProducts} />
+      <ProductCards products={filteredProducts || []} />
     </section>
   );
 }
